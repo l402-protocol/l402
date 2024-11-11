@@ -1,14 +1,7 @@
 # L402: The Missing Piece in the Internet’s Payment Infrastructure
 
 
-## Introduction
-
-Payments were initially overlooked in the internet’s design, even though the HTTP protocol reserved the 402 “Payment Required” status code for future use. Instead, payment solutions relied on existing networks like Visa and Mastercard, using human-centric processes such as checkout pages. These methods worked well for traditional software and user interactions, where payments were managed manually or through preconfigured accounts.
-
-With the rise of AI agents capable of discovering and integrating services autonomously at runtime, the limitations of human-centric payment flows have become apparent. These agents often interact through APIs over HTTP, bypassing the traditional browser-based workflows and exposing the need for a machine-friendly payment standard. Without human setup, existing payment structures fall short in supporting automated, seamless transactions.
-
-L402 is a protocol designed to make payments “machine-friendly” on the internet, allowing seamless integration of payments into HTTP as a first-class component. By leveraging HTTP’s 402 Payment Required status code and JSON payloads, L402 standardizes how services request payments before processing a request. This enables AI agents and automated systems to transact efficiently, making payments as integrated and accessible as data transfer itself.
-
+**Designed for a world where AI and automation are essential, L402 enables seamless, machine-friendly transactions that traditional, human-centric payment flows can’t support.**
 
 ## Key Features
 
@@ -20,6 +13,16 @@ L402 simplifies and automates the process of handling payments on the internet, 
 -  **Payment agnostic**: works with a variety of payment solutions, from services like Stripe to cryptocurrencies, offering developers the flexibility to use the payment network that best fits their needs.
 - **Designed for automation**: enables seamless, autonomous transactions between services and AI agents, removing the need for human intervention in payment processes.
 - **Extensible and open source**: built to be open and adaptable, making it easy to extend and integrate with future payment solutions and evolving technologies.
+
+## Introduction
+
+*L402 makes payments a core part of HTTP interactions by leveraging the HTTP 402 status code*
+
+Payments were largely an afterthought in the internet’s original design, even though the HTTP protocol reserved the 402 “Payment Required” status code for future use. Instead, payment solutions evolved around human-centric processes and relied on networks like Visa and Mastercard, making manual checkout flows the standard. This worked well for traditional web interactions, where payments were either preconfigured or managed manually by users.
+
+With the rise of autonomous systems and AI agents that discover and interact with services independently, the limitations of these human-centric payment flows are becoming clear. These agents interact primarily through APIs and bypass browser-based interfaces, revealing a need for a payment model that supports automated, real-time transactions without human setup.
+
+L402 addresses this gap by making payments “machine-friendly” on the internet. Leveraging HTTP’s 402 status code and JSON payloads, L402 standardizes how services request payments directly within HTTP interactions, enabling AI agents and automated systems to handle payments as naturally as data exchange. This transforms payments into a core, automated component of the web.
 
 ## Protocol
 
@@ -92,3 +95,12 @@ The interaction begins when a client requests access to a resource and the serve
   }
 }
 ```
+
+
+## Contributing
+
+We welcome contributions to L402! Here’s how you can get involved:
+1.	Join our community: Connect with other contributors and stay updated on L402’s development by joining our [Discord community](https://discord.gg/2tPYBgWzQm).
+2.	Report issues: If you encounter a bug or have a feature request, please open an issue on GitHub.
+3.	Submit Pull Requests: If you’re ready to contribute code, fork the repository and submit a pull request. Be sure to follow our coding guidelines and include relevant tests.
+4.	Documentation: Improving documentation is always appreciated. You can help by expanding explanations, adding examples, or updating outdated content.
