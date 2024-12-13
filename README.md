@@ -33,42 +33,35 @@ This sequence diagram illustrates how the L402 protocol streamlines the process 
 
 The interaction begins when a client requests access to a resource and the server checks if payment is needed. If payment is required, the server responds with details, allowing the client to complete the transaction. After verifying the payment, the server grants access to the resource. This workflow enables automated and seamless payment interactions over HTTP.
 
+1. **Initial Discovery (Step 1)**
+   - Client requests access to an HTTP resource
+   - Server responds with HTTP 402 and offer details
+   - Response includes details about each one of the available offers, a `payment_request_url` and payment methods for each offer
 
-1.	**Client request**: The client initiates the process by sending a request to access an HTTP resource on the server.
-2. **Server payment required check**:	The server evaluates if the client has access to the resource, checking whether the client has sufficient credits/is in the right tier or if payment is required.
-3.	**Server Responds with HTTP 402**: If payment is necessary and credits are insufficient, the server returns an HTTP 402 status code. This response includes a JSON body with payment details, such as the amount due and a link or instructions for completing the payment.
-4.	**Client Processes Payment**: The client processes the payment using the provided details. This can be done through an external service or a payment processor. The server may later verify the payment via a webhook or other notification from the payment service.
-5.	**Client Re-Requests**: After completing the payment, the client sends a new request for the HTTP resource.
-6.	**Server payment required check**: The server confirms that the payment has been processed or that the client’s credits are sufficient to grant access. This verification might be based on internal checks or external confirmations, such as webhooks from a payment processor.
-7.	**Server processes the request**:	Once the payment is verified, the server serves the requested resource to the client, completing the process.
+2. **Payment Processing (Step 2)**
+   - Client selects an offer and payment method
+   - Client requests specific payment details via `payment_request_url`
+   - Server generates and returns payment-specific details
+   - Client completes payment using the provided details
+   - Client re-requests the resource with proof of payment
+   - Server verifies and serves the requested resource
 
-### Payment request format
+### 402 response format
 
 ```json
 {
-  "version": "1.0",
+  "version": "0.2",
+  "payment_request_url": "https://api.example.com/l402/payment-request",
   "offers": [
     {
       "id": "offer_12345",
       "title": "One-time Access",
       "description": "Access to the resource for a single session",
-      "amount": 5.00,
+      "type": "one-time-payment",
+      "credits": 1,
+      "amount": 1.00,
       "currency": "USD",
-      "payment_methods": [
-        {
-          "payment_type": "Stripe",
-          "payment_details": {
-            "payment_link": "https://checkout.stripe.com/pay/abcdef12345"
-          }
-        },
-        {
-          "payment_type": "Lightning Network",
-          "payment_details": {
-            "invoice": "lnbc12345...",
-            "qr_code_url": "https://example.com/qrcode/lnbc12345"
-          }
-        }
-      ]
+      "payment_methods": ["lightning", "coinbase_commerce"]
     },
     {
       "id": "offer_67890",
@@ -76,15 +69,9 @@ The interaction begins when a client requests access to a resource and the serve
       "description": "Unlimited access for 30 days",
       "amount": 15.00,
       "currency": "EUR",
-      "payment_methods": [
-        {
-          "payment_type": "Credit Card",
-          "payment_details": {
-            "provider": "Stripe",
-            "payment_link": "https://checkout.stripe.com/pay/xyz789"
-          }
-        }
-      ]
+      "type": "subscription",
+      "duration": "1 month",
+      "payment_methods": ["credit_card", "lightning", "coinbase_commerce"]
     }
   ],
   "expiry": "2024-11-30T23:59:59Z",
@@ -96,6 +83,53 @@ The interaction begins when a client requests access to a resource and the serve
 }
 ```
 
+### Payment request format
+
+After selecting an offer from the L402 response, clients request specific payment details. Using the example above, to get payment details for offer `offer_12345` using Lightning Network:
+
+```bash
+curl -X POST https://api.example.com/l402/payment-request \
+  -H "Content-Type: application/json" \
+  -d '{
+    "offer_id": "offer_12345",
+    "payment_method": "lightning"
+  }'
+```
+
+The server responds with payment method-specific details:
+
+```json
+{
+  "version": "0.2",
+  "payment_request": {
+    "invoice": "lnbc50n1p3hk3etpp5...",
+  },
+}
+```
+
+The `payment_request` field varies based on the selected payment_method:
+
+- `lightning`: A lightning invoice string
+- `checkout_url`: A checkout URL (ex: Stripe payment link or Coinbaise commerce checkout page)
+- `contract_address`: On-chain contract addresses
+
+
+Usually a payment methods will have only one of the fields but sometimes there are multiple ways to pay the same option. For example
+coinbase commerce offers raw contract addresses and a hosted checkout url for browser based flows.
+```json
+{
+  "version": "0.2",
+  "payment_request": {
+    "checkout_url": "https://checkout.stripe.com/...",
+    "invoice": "lnbc50n1p3hk3etpp5...",
+    "contract_address": {
+      "1": "0x1FA57f87941...",
+      "137": "0x288844216...",
+      "8453": "0x03059433...",
+    }, 
+  },
+}
+```
 
 ## Contributing
 
