@@ -46,19 +46,45 @@ The interaction begins when a client requests access to a resource and the serve
    - Client re-requests the resource with proof of payment
    - Server verifies and serves the requested resource
 
+### Payment Types
+
+L402 supports three primary payment types, each designed for different use cases:
+
+1. **One-time Payments**
+   - Simplest form of payment for single-use access
+   - Ideal for: e-commerce transactions, individual content access, pay-per-view content, or one-off API calls
+   - No additional required fields
+
+2. **Subscription Payments**
+   - Enables recurring access for a specified duration
+   - Required field: `duration` (examples: "1 month", "1 year", "30 days")
+   - Best suited for: SaaS products, membership services, content platforms, or recurring API access
+   - Allows services to provide sustained access without repeated payments
+
+3. **Top-up Payments**
+   - Preload a balance for future use
+   - Required field: `balance` (numerical value representing available credits/tokens)
+   - Perfect for: API usage credits, digital wallet systems, prepaid services
+   - Enables micro-transactions without repeated payment overhead
+
+Example usage scenarios:
+- An flight/hotel provider might use **one-time** payments for a given trip.
+- A SaaS platform could use **subscriptions** for ongoing access to its API.
+- A developer platform might implement **top-up** payments where users pre-purchase API credits.
+
 ### 402 response format
 
 ```json
 {
-  "version": "0.2",
+  "version": "0.2.0",
   "payment_request_url": "https://api.example.com/l402/payment-request",
   "offers": [
     {
       "id": "offer_12345",
       "title": "One-time Access",
       "description": "Access to the resource for a single session",
-      "type": "one-time-payment",
-      "credits": 1,
+      "type": "top-up",
+      "balance": 1,
       "amount": 1.00,
       "currency": "USD",
       "payment_methods": ["lightning", "coinbase_commerce"]
@@ -74,7 +100,6 @@ The interaction begins when a client requests access to a resource and the serve
       "payment_methods": ["credit_card", "lightning", "coinbase_commerce"]
     }
   ],
-  "expiry": "2024-11-30T23:59:59Z",
   "terms_url": "https://example.com/terms",
   "metadata": {
     "resource_id": "resource_abc",
@@ -100,17 +125,17 @@ The server responds with payment method-specific details:
 
 ```json
 {
-  "version": "0.2",
+  "version": "0.2.0",
   "payment_request": {
-    "invoice": "lnbc50n1p3hk3etpp5...",
+    "lightning_invoice": "lnbc50n1p3hk3etpp5...",
   },
 }
 ```
 
 The `payment_request` field varies based on the selected payment_method:
 
-- `lightning`: A lightning invoice string
 - `checkout_url`: A checkout URL (ex: Stripe payment link or Coinbaise commerce checkout page)
+- `lightning_invoice`: A lightning invoice string
 - `contract_address`: On-chain contract addresses
 
 
@@ -118,16 +143,17 @@ Usually a payment methods will have only one of the fields but sometimes there a
 coinbase commerce offers raw contract addresses and a hosted checkout url for browser based flows.
 ```json
 {
-  "version": "0.2",
+  "version": "0.2.0",
   "payment_request": {
     "checkout_url": "https://checkout.stripe.com/...",
-    "invoice": "lnbc50n1p3hk3etpp5...",
-    "contract_address": {
+    "lightning_invoice": "lnbc50n1p3hk3etpp5...",
+    "contract_addresses": {
       "1": "0x1FA57f87941...",
       "137": "0x288844216...",
       "8453": "0x03059433...",
     }, 
   },
+  "expire_at": 
 }
 ```
 
