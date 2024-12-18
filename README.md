@@ -76,8 +76,9 @@ Example usage scenarios:
 
 ```json
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "payment_request_url": "https://api.example.com/l402/payment-request",
+  "payment_context_token": "pct_abc123xyz",
   "offers": [
     {
       "id": "offer_12345",
@@ -117,7 +118,8 @@ curl -X POST https://api.example.com/l402/payment-request \
   -H "Content-Type: application/json" \
   -d '{
     "offer_id": "offer_12345",
-    "payment_method": "lightning"
+    "payment_method": "lightning",
+    "payment_context_token": "pct_abc123xyz"
   }'
 ```
 
@@ -125,10 +127,11 @@ The server responds with payment method-specific details:
 
 ```json
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "payment_request": {
     "lightning_invoice": "lnbc50n1p3hk3etpp5...",
   },
+  "expires_at": "2024-03-20T15:30:00.123Z"
 }
 ```
 
@@ -141,19 +144,19 @@ The `payment_request` field varies based on the selected payment_method:
 
 Usually a payment methods will have only one of the fields but sometimes there are multiple ways to pay the same option. For example
 coinbase commerce offers raw contract addresses and a hosted checkout url for browser based flows.
+
 ```json
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "payment_request": {
     "checkout_url": "https://checkout.stripe.com/...",
-    "lightning_invoice": "lnbc50n1p3hk3etpp5...",
     "contract_addresses": {
       "1": "0x1FA57f87941...",
       "137": "0x288844216...",
       "8453": "0x03059433...",
     }, 
   },
-  "expire_at": 
+  "expires_at": "2024-03-20T15:30:00.123Z"
 }
 ```
 
