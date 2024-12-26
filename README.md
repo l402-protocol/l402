@@ -86,7 +86,7 @@ Example usage scenarios:
       "description": "Access to the resource for a single session",
       "type": "top-up",
       "balance": 1,
-      "amount": 1.00,
+      "amount": 100,
       "currency": "USD",
       "payment_methods": ["lightning", "coinbase_commerce"]
     },
@@ -94,7 +94,7 @@ Example usage scenarios:
       "id": "offer_67890",
       "title": "Monthly Subscription",
       "description": "Unlimited access for 30 days",
-      "amount": 15.00,
+      "amount": 1500,
       "currency": "EUR",
       "type": "subscription",
       "duration": "1 month",
