@@ -76,7 +76,7 @@ Example usage scenarios:
 
 ```json
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "payment_request_url": "https://api.example.com/l402/payment-request",
   "payment_context_token": "pct_abc123xyz",
   "offers": [
@@ -88,7 +88,7 @@ Example usage scenarios:
       "balance": 1,
       "amount": 100,
       "currency": "USD",
-      "payment_methods": ["lightning", "coinbase_commerce"]
+      "payment_methods": ["lightning", "onchain"]
     },
     {
       "id": "offer_67890",
@@ -98,7 +98,7 @@ Example usage scenarios:
       "currency": "EUR",
       "type": "subscription",
       "duration": "1 month",
-      "payment_methods": ["credit_card", "lightning", "coinbase_commerce"]
+      "payment_methods": ["credit_card", "lightning", "onchain"]
     }
   ],
   "terms_url": "https://example.com/terms",
@@ -123,11 +123,26 @@ curl -X POST https://api.example.com/l402/payment-request \
   }'
 ```
 
+The `onchain` payment type expects two extra fields `chain` and `asset`.
+
+```bash
+curl -X POST https://api.example.com/l402/payment-request \
+  -H "Content-Type: application/json" \
+  -d '{
+    "offer_id": "offer_12345",
+    "payment_method": "onchain",
+    "chain": "base",
+    "asset" "usdc",
+    "payment_context_token": "pct_abc123xyz"
+  }'
+```
+
+
 The server responds with payment method-specific details:
 
 ```json
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "payment_request": {
     "lightning_invoice": "lnbc50n1p3hk3etpp5...",
   },
@@ -147,7 +162,7 @@ coinbase commerce offers raw contract addresses and a hosted checkout url for br
 
 ```json
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "payment_request": {
     "checkout_url": "https://checkout.stripe.com/...",
     "contract_addresses": {
