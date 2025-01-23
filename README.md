@@ -131,7 +131,7 @@ curl -X POST https://api.example.com/l402/payment-request \
   -d '{
     "offer_id": "offer_12345",
     "payment_method": "onchain",
-    "chain": "base",
+    "chain": "base-mainnet",
     "asset" "usdc",
     "payment_context_token": "pct_abc123xyz"
   }'
@@ -154,22 +154,18 @@ The `payment_request` field varies based on the selected payment_method:
 
 - `checkout_url`: A checkout URL (ex: Stripe payment link or Coinbaise commerce checkout page)
 - `lightning_invoice`: A lightning invoice string
-- `contract_address`: On-chain contract addresses
+- `address`: On-chain contract address
 
 
-Usually a payment methods will have only one of the fields but sometimes there are multiple ways to pay the same option. For example
-coinbase commerce offers raw contract addresses and a hosted checkout url for browser based flows.
+Payment methods will have only one of the fields. In the case of onchain transactions, the address returned will correspond to the requested asset and chain.
 
 ```json
 {
   "version": "0.2.2",
   "payment_request": {
-    "checkout_url": "https://checkout.stripe.com/...",
-    "contract_addresses": {
-      "1": "0x1FA57f87941...",
-      "137": "0x288844216...",
-      "8453": "0x03059433...",
-    }, 
+    "address": "0x1FA57f87941...",
+    "asset": "usdc",
+    "chain": "base-mainnet"
   },
   "expires_at": "2024-03-20T15:30:00.123Z"
 }
