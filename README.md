@@ -1,180 +1,105 @@
-# L402: The Missing Piece in the Internet’s Payment Infrastructure
+# L402: A Simplified Payment Protocol for the Web
 
-
-**Designed for a world where AI and automation are essential, L402 enables seamless, machine-friendly transactions that traditional, human-centric payment flows can’t support.**
+**Enabling machine-friendly transactions through a minimalist HTTP-based payment standard**
 
 ## Key Features
 
-L402 simplifies and automates the process of handling payments on the internet, allowing seamless integration into digital workflows. It leverages HTTP as a foundation to standardize how payments are requested and processed, making it easier for AI agents and automated systems to interact with services.
+L402 simplifies web payments through:
 
-
-- **HTTP-based flow**: simplifies payment handling by using HTTP 402 status codes and JSON payloads, allowing clients to request resources, pay and access them seamlessly.
-- **Standarize payment requests**: services indicate payment requirements, making integration predictable and easier for developers to implement across different systems.
--  **Payment agnostic**: works with a variety of payment solutions, from services like Stripe to cryptocurrencies, offering developers the flexibility to use the payment network that best fits their needs.
-- **Designed for automation**: enables seamless, autonomous transactions between services and AI agents, removing the need for human intervention in payment processes.
-- **Extensible and open source**: built to be open and adaptable, making it easy to extend and integrate with future payment solutions and evolving technologies.
+- **HTTP-based flow**: Uses HTTP 402 status code with a Location header pointing to payment endpoint
+- **Optional price indication**: X-Price header provides payment amount in any response
+- **Minimalist approach**: Removes complex JSON payloads for simpler integration
+- **Payment agnostic**: Compatible with any payment system or cryptocurrency
+- **Machine-friendly**: Designed for AI agents and automated systems to handle payments seamlessly
 
 ## Introduction
 
 *L402 makes payments a core part of HTTP interactions by leveraging the HTTP 402 status code*
 
-Payments were largely an afterthought in the internet’s original design, even though the HTTP protocol reserved the 402 “Payment Required” status code for future use. Instead, payment solutions evolved around human-centric processes and relied on networks like Visa and Mastercard, making manual checkout flows the standard. This worked well for traditional web interactions, where payments were either preconfigured or managed manually by users.
+The internet's design largely overlooked payments, despite HTTP reserving the 402 "Payment Required" status code. Payment solutions have typically centered around human interactions and checkout flows, which worked for traditional web browsing but present challenges for autonomous systems and AI agents that operate independently through APIs.
 
-With the rise of autonomous systems and AI agents that discover and interact with services independently, the limitations of these human-centric payment flows are becoming clear. These agents interact primarily through APIs and bypass browser-based interfaces, revealing a need for a payment model that supports automated, real-time transactions without human setup.
-
-L402 addresses this gap by making payments “machine-friendly” on the internet. Leveraging HTTP’s 402 status code and JSON payloads, L402 standardizes how services request payments directly within HTTP interactions, enabling AI agents and automated systems to handle payments as naturally as data exchange. This transforms payments into a core, automated component of the web.
+L402 addresses this gap by creating a machine-friendly payment protocol. By using HTTP 402 status codes with a simple Location header redirecting to payment endpoints, L402 enables AI agents and automated systems to handle payments without human intervention.
 
 ## Protocol
 
-This sequence diagram illustrates how the L402 protocol streamlines the process of handling payments for HTTP resources. 
+The L402 protocol streamlines payment handling for HTTP resources through a simple redirect-based flow.
 
-![L402 Protocol Flow](l402-protocol-flow.svg)
+![L402 Simplified Protocol Flow](l402-protocol-flow.svg)
 
+### How It Works
 
-The interaction begins when a client requests access to a resource and the server checks if payment is needed. If payment is required, the server responds with details, allowing the client to complete the transaction. After verifying the payment, the server grants access to the resource. This workflow enables automated and seamless payment interactions over HTTP.
+1. **Initial Request**
+   - Client requests an HTTP resource
+   - If payment is required, server responds with HTTP 402
+   - Response includes a Location header pointing to the payment endpoint
+   - Optional X-Price header indicates the amount (e.g., "0.01 USD")
 
-1. **Initial Discovery (Step 1)**
-   - Client requests access to an HTTP resource
-   - Server responds with HTTP 402 and offer details
-   - Response includes details about each one of the available offers, a `payment_request_url` and payment methods for each offer
+2. **Payment Processing**
+   - Client follows the Location header to the payment endpoint
+   - Payment endpoint handles the transaction details
+   - After payment, the client can request the original resource again
+   - Server verifies payment and provides access to the resource
 
-2. **Payment Processing (Step 2)**
-   - Client selects an offer and payment method
-   - Client requests specific payment details via `payment_request_url`
-   - Server generates and returns payment-specific details
-   - Client completes payment using the provided details
-   - Client re-requests the resource with proof of payment
-   - Server verifies and serves the requested resource
+### Headers Specification
 
-### Payment Types
+1. **Location Header (Required with 402)**
+   - Points to the payment endpoint URL
+   - Example: `Location: https://api.example.com/pay/item-123`
 
-L402 supports three primary payment types, each designed for different use cases:
+2. **X-Price Header (Optional)**
+   - Can be included with any status code (not just 402)
+   - Format: `X-Price: <amount> [<currency>]`
+   - Default currency is USD if none specified
+   - Examples:
+     - `X-Price: 0.01` (1 cent USD)
+     - `X-Price: 0.01 USD` (1 cent USD)
+     - `X-Price: 10 EUR` (10 euros)
+     - `X-Price: 0.0001 BTC` (Bitcoin amount)
 
-1. **One-time Payments**
-   - Simplest form of payment for single-use access
-   - Ideal for: e-commerce transactions, individual content access, pay-per-view content, or one-off API calls
-   - No additional required fields
+### Example Flow
 
-2. **Subscription Payments**
-   - Enables recurring access for a specified duration
-   - Required field: `duration` (examples: "1 month", "1 year", "30 days")
-   - Best suited for: SaaS products, membership services, content platforms, or recurring API access
-   - Allows services to provide sustained access without repeated payments
+**Initial Request:**
+"""
+GET /premium-content HTTP/1.1
+Host: api.example.com
+"""
 
-3. **Top-up Payments**
-   - Preload a balance for future use
-   - Required field: `balance` (numerical value representing available credits/tokens)
-   - Perfect for: API usage credits, digital wallet systems, prepaid services
-   - Enables micro-transactions without repeated payment overhead
+**Server Response (Payment Required):**
+"""
+HTTP/1.1 402 Payment Required
+Location: https://api.example.com/pay/premium-content-123
+X-Price: 0.50 USD
+"""
 
-Example usage scenarios:
-- An flight/hotel provider might use **one-time** payments for a given trip.
-- A SaaS platform could use **subscriptions** for ongoing access to its API.
-- A developer platform might implement **top-up** payments where users pre-purchase API credits.
+**Client makes payment at the Location URL and then retries:**
+"""
+GET /premium-content HTTP/1.1
+Host: api.example.com
+Authorization: Bearer payment_token_xyz
+"""
 
-### 402 response format
+**Server Response (After Payment):**
+"""
+HTTP/1.1 200 OK
+Content-Type: application/json
 
-```json
 {
-  "version": "0.2.2",
-  "payment_request_url": "https://api.example.com/l402/payment-request",
-  "payment_context_token": "pct_abc123xyz",
-  "offers": [
-    {
-      "id": "offer_12345",
-      "title": "One-time Access",
-      "description": "Access to the resource for a single session",
-      "type": "top-up",
-      "balance": 1,
-      "amount": 100,
-      "currency": "USD",
-      "payment_methods": ["lightning", "onchain"]
-    },
-    {
-      "id": "offer_67890",
-      "title": "Monthly Subscription",
-      "description": "Unlimited access for 30 days",
-      "amount": 1500,
-      "currency": "EUR",
-      "type": "subscription",
-      "duration": "1 month",
-      "payment_methods": ["credit_card", "lightning", "onchain"]
-    }
-  ],
-  "terms_url": "https://example.com/terms",
-  "metadata": {
-    "resource_id": "resource_abc",
-    "client_note": "Payment required for premium content"
-  }
+  "premium_content": "Here is the content you paid for."
 }
-```
+"""
 
-### Payment request format
+## Benefits
 
-After selecting an offer from the L402 response, clients request specific payment details. Using the example above, to get payment details for offer `offer_12345` using Lightning Network:
-
-```bash
-curl -X POST https://api.example.com/l402/payment-request \
-  -H "Content-Type: application/json" \
-  -d '{
-    "offer_id": "offer_12345",
-    "payment_method": "lightning",
-    "payment_context_token": "pct_abc123xyz"
-  }'
-```
-
-The `onchain` payment type expects two extra fields `chain` and `asset`.
-
-```bash
-curl -X POST https://api.example.com/l402/payment-request \
-  -H "Content-Type: application/json" \
-  -d '{
-    "offer_id": "offer_12345",
-    "payment_method": "onchain",
-    "chain": "base-mainnet",
-    "asset" "usdc",
-    "payment_context_token": "pct_abc123xyz"
-  }'
-```
-
-
-The server responds with payment method-specific details:
-
-```json
-{
-  "version": "0.2.2",
-  "payment_request": {
-    "lightning_invoice": "lnbc50n1p3hk3etpp5...",
-  },
-  "expires_at": "2024-03-20T15:30:00.123Z"
-}
-```
-
-The `payment_request` field varies based on the selected payment_method:
-
-- `checkout_url`: A checkout URL (ex: Stripe payment link or Coinbaise commerce checkout page)
-- `lightning_invoice`: A lightning invoice string
-- `address`: On-chain contract address
-
-
-Payment methods will have only one of the fields. In the case of onchain transactions, the address returned will correspond to the requested asset and chain.
-
-```json
-{
-  "version": "0.2.2",
-  "payment_request": {
-    "address": "0x1FA57f87941...",
-    "asset": "usdc",
-    "chain": "base-mainnet"
-  },
-  "expires_at": "2024-03-20T15:30:00.123Z"
-}
-```
+- **Simplicity**: Minimal implementation requirements make adoption easy
+- **Flexibility**: Works with any payment system through the Location redirect
+- **Machine Readability**: Clear protocol for automated systems
+- **Backward Compatibility**: X-Price header works with any status code
+- **Standardization**: Consistent approach across different services
 
 ## Contributing
 
-We welcome contributions to L402! Here’s how you can get involved:
-1.	Join our community: Connect with other contributors and stay updated on L402’s development by joining our [Discord community](https://discord.gg/2tPYBgWzQm).
-2.	Report issues: If you encounter a bug or have a feature request, please open an issue on GitHub.
-3.	Submit Pull Requests: If you’re ready to contribute code, fork the repository and submit a pull request. Be sure to follow our coding guidelines and include relevant tests.
-4.	Documentation: Improving documentation is always appreciated. You can help by expanding explanations, adding examples, or updating outdated content.
+We welcome contributions to L402! Here's how you can get involved:
+1. Join our community: Connect with other contributors and stay updated on L402's development by joining our [Discord community](https://discord.gg/2tPYBgWzQm).
+2. Report issues: If you encounter a bug or have a feature request, please open an issue on GitHub.
+3. Submit Pull Requests: If you're ready to contribute code, fork the repository and submit a pull request.
+4. Documentation: Improving documentation is always appreciated. You can help by expanding explanations, adding examples, or updating outdated content.
