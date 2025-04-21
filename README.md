@@ -1,7 +1,7 @@
-# L402: The Missing Piece in the Internet’s Payment Infrastructure
+# L402: The Missing Link in Internet Payment Infrastructure
 
 
-**Designed for a world where AI and automation are essential, L402 enables seamless, machine-friendly transactions that traditional, human-centric payment flows can’t support.**
+**In today's AI-driven world, L402 bridges the gap between automation and payments, enabling machine-friendly transactions where traditional human-centric payment flows fall short.**
 
 ## Key Features
 
@@ -18,17 +18,17 @@ L402 simplifies and automates the process of handling payments on the internet, 
 
 *L402 makes payments a core part of HTTP interactions by leveraging the HTTP 402 status code*
 
-Payments were largely an afterthought in the internet’s original design, even though the HTTP protocol reserved the 402 “Payment Required” status code for future use. Instead, payment solutions evolved around human-centric processes and relied on networks like Visa and Mastercard, making manual checkout flows the standard. This worked well for traditional web interactions, where payments were either preconfigured or managed manually by users.
+Payments were largely an afterthought in the internet's original design, even though the HTTP protocol reserved the 402 "Payment Required" status code for future use. Instead, payment solutions evolved around human-centric processes and relied on networks like Visa and Mastercard, making manual checkout flows the standard. This worked well for traditional web interactions, where payments were either preconfigured or managed manually by users.
 
 With the rise of autonomous systems and AI agents that discover and interact with services independently, the limitations of these human-centric payment flows are becoming clear. These agents interact primarily through APIs and bypass browser-based interfaces, revealing a need for a payment model that supports automated, real-time transactions without human setup.
 
-L402 addresses this gap by making payments “machine-friendly” on the internet. Leveraging HTTP’s 402 status code and JSON payloads, L402 standardizes how services request payments directly within HTTP interactions, enabling AI agents and automated systems to handle payments as naturally as data exchange. This transforms payments into a core, automated component of the web.
+L402 addresses this gap by making payments "machine-friendly" on the internet. Leveraging HTTP's 402 status code and JSON payloads, L402 standardizes how services request payments directly within HTTP interactions, enabling AI agents and automated systems to handle payments as naturally as data exchange. This transforms payments into a core, automated component of the web.
 
 ## Protocol
 
 This sequence diagram illustrates how the L402 protocol streamlines the process of handling payments for HTTP resources. 
 
-![L402 Protocol Flow](l402-protocol-flow.svg)
+![L402 Protocol Flow](img/l402-protocol-flow.svg)
 
 
 The interaction begins when a client requests access to a resource and the server checks if payment is needed. If payment is required, the server responds with details, allowing the client to complete the transaction. After verifying the payment, the server grants access to the resource. This workflow enables automated and seamless payment interactions over HTTP.
@@ -162,8 +162,24 @@ coinbase commerce offers raw contract addresses and a hosted checkout url for br
 
 ## Contributing
 
-We welcome contributions to L402! Here’s how you can get involved:
-1.	Join our community: Connect with other contributors and stay updated on L402’s development by joining our [Discord community](https://discord.gg/2tPYBgWzQm).
+We welcome contributions to L402! Here's how you can get involved:
+1.	Join our community: Connect with other contributors and stay updated on L402's development by joining our [Discord community](https://discord.gg/2tPYBgWzQm).
 2.	Report issues: If you encounter a bug or have a feature request, please open an issue on GitHub.
-3.	Submit Pull Requests: If you’re ready to contribute code, fork the repository and submit a pull request. Be sure to follow our coding guidelines and include relevant tests.
+3.	Submit Pull Requests: If you're ready to contribute code, fork the repository and submit a pull request. Be sure to follow our coding guidelines and include relevant tests.
 4.	Documentation: Improving documentation is always appreciated. You can help by expanding explanations, adding examples, or updating outdated content.
+
+## Implementation Resources
+
+To help you get started with L402, we provide several resources:
+
+### Example Implementations
+
+- [L402 Server Example](https://github.com/l402-protocol/l402-server-example): A working implementation of a server that uses L402 for a Stock Data API, demonstrating how to integrate payment processing using Lightning Network, Stripe, and Coinbase Commerce.
+
+- [L402 Client Example](https://github.com/l402-protocol/l402-client-example): Example implementations of L402 protocol clients using various frameworks (OpenAI, LangChain, CrewAI) and payment methods like Lightspark, with more coming soon.
+
+### LLM Integration
+
+We provide a [`llms.txt`](https://github.com/l402-protocol/llms.txt) file that follows the [llms.txt specification](https://llmstxt.org/). This standardized file helps AI assistants and IDE integrations better understand the L402 protocol. When using AI tools like Cursor or other LLM-powered development environments, this file provides structured, concise information about the protocol, its implementation, and important resources.
+
+These resources provide practical examples that you can adapt for your own services, making it easier to implement machine-friendly payment flows.
