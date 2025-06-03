@@ -3,6 +3,8 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+// Access the environment variable
+const googleAnalyticsTrackingID = process.env.GA_ID;
 
 const config: Config = {
   title: 'L402 Protocol',
@@ -62,6 +64,12 @@ const config: Config = {
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
         },
+        gtag: googleAnalyticsTrackingID
+        ? {
+            trackingID: googleAnalyticsTrackingID,
+            anonymizeIP: true,
+          }
+        : undefined,
         theme: {
           customCss: './src/css/custom.css',
         },
