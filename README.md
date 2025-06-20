@@ -43,8 +43,8 @@ The interaction begins when a client requests access to a resource and the serve
    - Client requests specific payment details via `payment_request_url`
    - Server generates and returns payment-specific details
    - Client completes payment using the provided details
-   - Client re-requests the resource with proof of payment
-   - Server verifies and serves the requested resource
+   - Client re-requests the resource
+   - Server serves the requested resource
 
 ### Payment Types
 
