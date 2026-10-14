@@ -194,3 +194,5 @@ To help you get started with L402, we provide several resources:
 We provide a [`llms.txt`](https://github.com/l402-protocol/llms.txt) file that follows the [llms.txt specification](https://llmstxt.org/). This standardized file helps AI assistants and IDE integrations better understand the L402 protocol. When using AI tools like Cursor or other LLM-powered development environments, this file provides structured, concise information about the protocol, its implementation, and important resources.
 
 These resources provide practical examples that you can adapt for your own services, making it easier to implement machine-friendly payment flows.
+
+- **[M2M Market — Freedom Engine Gateway](https://github.com/m2mfreedom/freedom-m2m-mcp-server)** - Production L402 & x402 M2M API Gateway & Clearinghouse for AI Agents (`http://32.197.245.10:3001/openapi.json`, 100/100 Verified SLA).
